@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 23:24:58
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-06 23:40:11
+ * @Last Modified time: 2020-03-07 12:38:55
  */
 
 <template>
@@ -12,7 +12,7 @@
       class="form"
       @submit.prevent="handleSubmit"
     >
-      <p class="form-header">欢迎登录</p>
+      <h1 class="form-header">欢迎登录影视1994</h1>
       <a-form-item>
         <a-input
           v-decorator="[
@@ -20,6 +20,7 @@
             { rules: [{ required: true, message: '账号不为空' }] },
           ]"
           placeholder="账号"
+          allowClear
         >
           <a-icon slot="prefix" type="user" />
         </a-input>
@@ -32,6 +33,7 @@
           ]"
           type="password"
           placeholder="密码"
+          allowClear
         >
           <a-icon slot="prefix" type="lock" />
         </a-input>
@@ -39,6 +41,7 @@
       <a-form-item>
         <a-button :loading="loading" type="primary" html-type="submit" block>登录</a-button>
       </a-form-item>
+      <router-link :to="{ name: 'register', query: $route.query }" replace class="link">立即注册</router-link>
     </a-form>
   </div>
 </template>
@@ -95,22 +98,31 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .login-page {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 10% 20px;
   min-height: 100vh;
   background-color: #001529;
 
   .form {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 20px;
     width: 400px;
+    background-color: rgba(255,255,255,.25);
   }
 
   .form-header {
-    text-align: center;
-    font-size: 32px;
+    align-self: center;
     color: #fff;
+  }
+
+  .link {
+    align-self: flex-end;
   }
 }
 </style>
