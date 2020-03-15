@@ -2,15 +2,15 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 20:44:52
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-06 23:39:53
+ * @Last Modified time: 2020-03-07 15:07:08
  */
 
 <template>
   <a-layout-sider class="sider" :collapsed="collapsed">
-    <div class="logo-box">
+    <router-link to="/index" class="logo-box">
       <img class="logo" alt="logo" src="@/assets/logo.png">
       <span v-show="!collapsed">个人中心</span>
-    </div>
+    </router-link>
     <a-menu
       :defaultOpenKeys="defaultOpenKeys"
       :defaultSelectedKeys="defaultSelectedKeys"
@@ -21,13 +21,13 @@
         <template v-if="item.sider != false">
           <span slot="title">
             <a-icon v-if="item.icon" :type="item.icon" />
-            <span>{{ item.title }}</span>
+            <span>{{ item.meta.title }}</span>
           </span>
 
           <a-menu-item v-for="child in item.children" :key="child.name" v-show="item.sider != false">
             <template v-if="child.sider != false">
               <a-icon v-if="child.icon" :type="child.icon" />
-              <router-link :to="child.path">{{ child.title }}</router-link>
+              <router-link :to="child.path">{{ child.meta.title }}</router-link>
             </template>
           </a-menu-item>
         </template>

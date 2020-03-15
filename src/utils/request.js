@@ -2,24 +2,23 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:08
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-07 00:27:14
+ * @Last Modified time: 2020-03-15 22:04:55
  */
 
-import _                from 'lodash'
-import axios            from 'axios'
-import moment           from 'moment'
-import { notification } from 'ant-design-vue'
+import _                     from 'lodash'
+import axios                 from 'axios'
+import { notification }      from 'ant-design-vue'
 
-import router           from '@/router'
-import { getToken }     from './token'
+import { getTokenSignature } from './token'
+import { goLogin }           from './login'
 
 // api baseURL
-const baseURL  = process.env.NODE_ENV === 'development' ? 'http://localhost:8088/' : 'https://api.ys1994.nl'
+const baseURL  = process.env.NODE_ENV === 'development' ? 'http://localhost:8090/' : 'https://api.ys1994.nl'
 const instance = axios.create({ baseURL })
 
 // 拦截请求
 instance.interceptors.request.use(config => {
-  const token = getToken()
+  const token = getTokenSignature()
   if (token) {
     config.headers.auth = token
   }
@@ -33,17 +32,16 @@ instance.interceptors.request.use(config => {
 
 // 拦截回应
 instance.interceptors.response.use(response => {
-  const h = _.get(response.headers, 'date')
-  response.data.h = moment(h).unix() + ''
   return response.data
 }, error => {
   notification.error({
     message: _.get(error, 'response.data.msg') || error
   })
   if (error.response.status === 401) {
-    router.replace({ name: 'login', query: { redirect: encodeURIComponent(router.app.$route.fullPath) } })
+    goLogin()
   }
   return Promise.reject(error)
 })
 
+export const request = instance
 export default instance

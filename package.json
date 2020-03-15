@@ -10,9 +10,9 @@
   "dependencies": {
     "ant-design-vue": "^1.4.12",
     "axios": "^0.19.2",
+    "browser-md5-file": "^1.1.1",
     "core-js": "^3.6.4",
-    "jsencrypt": "^3.0.0-rc.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsrsasign": "^8.0.12",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "vue": "^2.6.11",

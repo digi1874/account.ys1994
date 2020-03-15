@@ -2,21 +2,27 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:00
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-06 20:39:41
+ * @Last Modified time: 2020-03-15 20:54:25
  */
 
-import moment         from 'moment'
-import { randomWord } from './randomWord'
+import moment from 'moment'
 
 // localStorage key
 const TOKEN_KEY = 'user_token'
-// 用来混淆token值
-let tokenStart  = randomWord(2)
+
+/**
+ * 获取token signature
+ * @function
+ * @returns {String}
+ */
+export const getTokenSignature = () => {
+  return getToken().replace(/.+\.(.+)/, '$1')
+}
 
 /**
  * 获取token
  * @function
- * @returns    {String}    返回混淆token值；用于配置axios.config.headers.auth值。
+ * @returns {String}
  */
 export const getToken = () => {
   const token = localStorage.getItem(TOKEN_KEY)
@@ -29,7 +35,7 @@ export const getToken = () => {
     return ''
   }
 
-  return tokenStart + token
+  return token
 }
 
 /**
@@ -42,9 +48,6 @@ export const setToken = token => {
   if (!verify(token)) {
     return false
   }
-
-  // 每次保存时刷新混淆值
-  tokenStart = randomWord(2)
 
   localStorage.setItem(TOKEN_KEY, token)
   return true
@@ -66,7 +69,7 @@ export const delToken = () => {
  */
 function verify (token) {
   try {
-    const { exp } = JSON.parse(atob(token.replace(/.+\.(.+)\..+/, '$1')))
+    const { exp } = JSON.parse(atob(token.replace(/(.+)\..+/, '$1')))
     return exp > moment().unix()
   } catch (err) {
     return false

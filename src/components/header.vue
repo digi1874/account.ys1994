@@ -2,14 +2,15 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 23:24:48
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-06 23:39:40
+ * @Last Modified time: 2020-03-15 22:08:45
  */
 
 <template>
   <a-layout-header class="header">
     <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="switchCollapsed" class="switch-collapsed" />
-    <div>
-      <span>{{ info.name }}</span>
+    <div class="right">
+      <a-avatar icon="user" />
+      <span style="margin-left:10px;">{{ info.name || '用户' + info.id }}</span>
       <a-button @click="logout" :loading="logoutLoading" type="link">退出</a-button>
     </div>
   </a-layout-header>
@@ -17,7 +18,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import { delToken }                           from '@/utils/token'
+import { delToken, goLogin }                  from '@/utils'
 import { logout }                             from '@/api'
 
 export default {
@@ -39,10 +40,10 @@ export default {
     ...mapMutations('sider', {
       switchCollapsed: 'switchCollapsed',
     }),
-    ...mapMutations('admin', {
+    ...mapMutations('user', {
       deleteInfo: 'deleteInfo'
     }),
-    ...mapActions('admin', {
+    ...mapActions('user', {
       getInfo: 'getInfo'
     }),
     logout () {
@@ -54,7 +55,7 @@ export default {
         this.logoutLoading = false
         delToken()
         this.deleteInfo()
-        this.$router.replace({ name: 'login', query: { redirect: encodeURIComponent(this.$route.fullPath) } })
+        goLogin()
       })
     }
   }
@@ -79,6 +80,11 @@ export default {
     &:hover {
       color: #1890ff;
     }
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
   }
 }
 </style>
