@@ -2,11 +2,11 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-07 15:48:12
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-07 16:32:38
+ * @Last Modified time: 2020-03-16 16:34:57
  */
 
-import { fileToUrl } from './fileToUrl'
-import { urlToImage } from './urlToImage'
+import { fileToUrl }   from './fileToUrl'
+import { urlToImage }  from './urlToImage'
 import { imageToFile } from './imageToFile'
 
 /**

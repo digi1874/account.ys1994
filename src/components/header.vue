@@ -2,16 +2,17 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 23:24:48
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-15 22:08:45
+ * @Last Modified time: 2020-03-16 22:06:17
  */
 
 <template>
   <a-layout-header class="header">
     <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="switchCollapsed" class="switch-collapsed" />
     <div class="right">
-      <a-avatar icon="user" />
-      <span style="margin-left:10px;">{{ info.name || '用户' + info.id }}</span>
-      <a-button @click="logout" :loading="logoutLoading" type="link">退出</a-button>
+      <a-avatar v-if="!info.avatar" icon="user" />
+      <a-avatar v-if="info.avatar" :src="info.avatar | imageUrl" class="avatar"/>
+      <span style="margin-left:10px;">{{ info.name }}</span>
+      <a-button @click="logout" :loading="logoutLoading" type="link" ghost>退出</a-button>
     </div>
   </a-layout-header>
 </template>
@@ -68,7 +69,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0;
-  background: #fff;
+  background: #002344;
 
   .switch-collapsed {
     font-size: 18px;
@@ -76,6 +77,7 @@ export default {
     padding: 0 24px;
     cursor: pointer;
     transition: color 0.3s;
+    color: #fff;
 
     &:hover {
       color: #1890ff;
@@ -85,6 +87,10 @@ export default {
   .right {
     display: flex;
     align-items: center;
+  }
+
+  .avatar {
+    background-color: #fafafa;
   }
 }
 </style>

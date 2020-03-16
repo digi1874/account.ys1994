@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-07 14:48:12
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-07 22:56:16
+ * @Last Modified time: 2020-03-16 22:11:14
  */
 
 <template>
@@ -16,69 +16,36 @@
       :customRequest="uploadAvatar"
       accept="image/jpeg, image/jpg, image/png"
     >
-      <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+      <img v-if="userInfo.avatar" :src="userInfo.avatar | imageUrl" alt="avatar" />
       <div v-else>
         <a-icon :type="loading ? 'loading' : 'plus'" />
-        <div class="ant-upload-text">Upload</div>
+        <div class="ant-upload-text">上传头像</div>
       </div>
     </a-upload>
   </div>
 </template>
 
 <script>
-import FileMD5 from 'browser-md5-file'
-import sparkMd5 from 'spark-md5'
-import KJUR from 'jsrsasign'
-import { compressImage, urlToImage } from '@/utils'
-
-function md5(file, progressFn) {
-  let progress = 0;
-  let currentChunk = 0;
-  const blobSlice =
-    File.prototype.slice ||
-    File.prototype.mozSlice ||
-    File.prototype.webkitSlice;
-  const chunkSize = 2097152;
-  const chunks = Math.ceil(file.size / chunkSize);
-  const spark = new sparkMd5.ArrayBuffer();
-  const reader = new FileReader();
-
-  loadNext();
-
-  reader.onloadend = e => {
-    console.log('e.target.result', e.target.result)
-    spark.append(e.target.result); // Append array buffer
-    currentChunk++;
-    progress = currentChunk / chunks;
-
-    if (progressFn && typeof progressFn === 'function') {
-      progressFn(progress);
-    }
-
-    if (currentChunk < chunks) {
-      loadNext();
-    } else {
-      const m5 = spark.end()
-      console.log('md5 spark.end()', m5)
-    }
-  };
-
-  /////////////////////////
-  function loadNext() {
-    const start = currentChunk * chunkSize;
-    const end = start + chunkSize >= file.size ? file.size : start + chunkSize;
-    reader.readAsArrayBuffer(blobSlice.call(file, start, end));
-  }
-}
+import { mapState, mapMutations } from 'vuex'
+import { notification } from 'ant-design-vue'
+import { compressImage, md5File, urlToImage } from '@/utils'
+import { uploadImage, updateInfo } from '@/api'
 
 export default {
   data() {
     return {
-      loading: false,
-      imageUrl: ''
+      loading: false
     }
   },
+  computed: {
+    ...mapState({
+      userInfo: store => store.user.info
+    })
+  },
   methods: {
+    ...mapMutations('user', {
+      setInfo: 'setInfo'
+    }),
     beforeUpload(file) {
       if (['image/jpeg', 'image/jpg', 'image/png'].indexOf(file.type) === -1) {
         this.$message.error('只能上传jpg、jpg、png格式图片')
@@ -91,48 +58,34 @@ export default {
       return true
     },
     uploadAvatar({ file }) {
+      // 压缩图片
       compressImage(file, 100, 100).then(blob => {
-        const bmf = new FileMD5()
-        bmf.md5(blob, (err, value) => {
-          if (err) {
-            this.$message.error(err)
-            return
-          }
-
-          window.console.log(value)
-
-          const name = blob.type.replace(/.+\/(.+)$/, value + '.$1')
-          const url = this.$options.filters.imageUrl(name)
-          urlToImage(url).then(() => {
-            console
+        // 计算MD5
+        md5File(blob).then(hash => {
+          const fileName = blob.type.replace(/.+\/(.+)$/, hash.replace(/(.{8})/g, '/$1') + '.$1')
+          // 服务器是否存在此图片
+          urlToImage(this.$options.filters.imageUrl(fileName)).then(() => {
+            // 存在更新头像
+            this.updateInfo(fileName)
           }).catch(() => {
-            const param = new FormData()
-            param.append('file', blob)
-            // this.$axios.$post(uploadImage, param, {
-            //   headers: { 'Content-Type': 'multipart/form-data' }
-            // }).then(({ data }) => {
-            //   this.$emit('input', data)
-            // })
+            // 不存在上传
+            uploadImage(blob).then(() => {
+              // 更新头像
+              this.updateInfo(fileName)
+            })
           })
         })
-
-        md5(blob)
-
-        blob.text().then(text => {
-          const m = KJUR.crypto.Util.md5(text)
-          window.console.log('text', m)
-          window.console.log(sparkMd5.hash(text))
+      })
+    },
+    updateInfo(avatar) {
+      updateInfo({ avatar }).then(()=> {
+        notification.success({
+          message: '更换头像成功'
         })
-
-
-        const reader = new FileReader()
-        reader.readAsText(blob, 'base64')
-        reader.onloadend = e => {
-          const text = e.target.result
-          const m = KJUR.crypto.Util.md5(text)
-          window.console.log('readAsText', m)
-          window.console.log(sparkMd5.hash(text))
-        }
+        this.setInfo({
+          ...this.userInfo,
+          avatar
+        })
       })
     }
   }

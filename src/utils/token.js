@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:00
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-15 20:54:25
+ * @Last Modified time: 2020-03-16 16:37:09
  */
 
 import moment from 'moment'
@@ -15,9 +15,7 @@ const TOKEN_KEY = 'user_token'
  * @function
  * @returns {String}
  */
-export const getTokenSignature = () => {
-  return getToken().replace(/.+\.(.+)/, '$1')
-}
+export const getTokenSignature = () => getToken().replace(/.+\.(.+)/, '$1')
 
 /**
  * 获取token
@@ -27,13 +25,9 @@ export const getTokenSignature = () => {
 export const getToken = () => {
   const token = localStorage.getItem(TOKEN_KEY)
 
-  if (!token) {
-    return ''
-  }
+  if (!token) return ''
 
-  if (!verify(token)) {
-    return ''
-  }
+  if (!verify(token)) return ''
 
   return token
 }
@@ -45,9 +39,7 @@ export const getToken = () => {
  * @returns {Boolean}       返回是否保存。
  */
 export const setToken = token => {
-  if (!verify(token)) {
-    return false
-  }
+  if (!verify(token)) return false
 
   localStorage.setItem(TOKEN_KEY, token)
   return true
@@ -57,9 +49,7 @@ export const setToken = token => {
  * 删除token
  * @function
  */
-export const delToken = () => {
-  localStorage.removeItem(TOKEN_KEY)
-}
+export const delToken = () => localStorage.removeItem(TOKEN_KEY)
 
 /**
  * 验证token，只验证是否过期；不验证加密有效性，不需要在前端验证，也不能把私密写在前端。
