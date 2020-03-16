@@ -2,16 +2,17 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:35
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-16 12:44:33
+ * @Last Modified time: 2020-03-16 13:02:57
  */
 
-import Vue                    from 'vue'
-import VueRouter              from 'vue-router'
+import Vue       from 'vue'
+import VueRouter from 'vue-router'
 
-import Main                   from '@/components/main'
-import Home                   from '@/page/home'
-import Avatar                 from '@/page/avatar'
-import Info                 from '@/page/info'
+import Main      from '@/components/main'
+import Home      from '@/page/home'
+import Avatar    from '@/page/avatar'
+import Info      from '@/page/info'
+import Password  from '@/page/password'
 import {
   getToken,
   setToken,
@@ -41,6 +42,13 @@ export const routes = [
     component: Info,
     meta: { title: '我的信息' },
     icon: 'info'
+  },
+  {
+    name: 'password',
+    path: '/password',
+    component: Password,
+    meta: { title: '修改密码' },
+    icon: 'lock'
   }
 ]
 

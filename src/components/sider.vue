@@ -2,18 +2,18 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 20:44:52
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-16 12:43:37
+ * @Last Modified time: 2020-03-16 12:50:58
  */
 
 <template>
   <a-layout-sider class="sider" :collapsed="collapsed">
-    <router-link to="/index" class="logo-box">
+    <router-link to="/home" class="logo-box">
       <img class="logo" alt="logo" src="@/assets/logo.png">
       <span v-show="!collapsed">个人中心</span>
     </router-link>
     <a-menu
-      :defaultOpenKeys="defaultOpenKeys"
-      :defaultSelectedKeys="defaultSelectedKeys"
+      :openKeys="defaultOpenKeys"
+      :selectedKeys="defaultSelectedKeys"
       mode="inline"
     >
       <template v-for="item in routes">
@@ -88,6 +88,7 @@ export default {
     background-color: #002344;
     white-space: nowrap;
     overflow: hidden;
+    text-decoration: none;
 
     .logo {
       width: 40px;
