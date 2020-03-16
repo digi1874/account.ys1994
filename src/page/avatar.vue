@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-07 14:48:12
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-16 22:11:14
+ * @Last Modified time: 2020-03-16 22:44:22
  */
 
 <template>
@@ -62,7 +62,7 @@ export default {
       compressImage(file, 100, 100).then(blob => {
         // 计算MD5
         md5File(blob).then(hash => {
-          const fileName = blob.type.replace(/.+\/(.+)$/, hash.replace(/(.{8})/g, '/$1') + '.$1')
+          const fileName = blob.type.replace(/.+\/(.+)$/, hash.replace(/^(.{2})(.{2})/, '$1/$2/') + '.$1')
           // 服务器是否存在此图片
           urlToImage(this.$options.filters.imageUrl(fileName)).then(() => {
             // 存在更新头像
@@ -78,6 +78,7 @@ export default {
       })
     },
     updateInfo(avatar) {
+      this.userInfo.avatar !== avatar &&
       updateInfo({ avatar }).then(()=> {
         notification.success({
           message: '更换头像成功'
