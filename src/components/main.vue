@@ -1,8 +1,8 @@
 /*
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:41
- * @Last Modified by:   lin.zhenhui
- * @Last Modified time: 2020-03-06 18:51:41
+ * @Last Modified by: lin.zhenhui
+ * @Last Modified time: 2020-03-16 12:14:14
  */
 
 <template>
@@ -26,7 +26,7 @@
 
 <script>
 import Header from '@/components/header'
-import Sider from '@/components/sider'
+import Sider  from '@/components/sider'
 
 export default {
   components: { Header, Sider },

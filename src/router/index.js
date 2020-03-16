@@ -2,15 +2,16 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:35
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-15 22:05:44
+ * @Last Modified time: 2020-03-16 12:44:33
  */
 
 import Vue                    from 'vue'
 import VueRouter              from 'vue-router'
 
-import Main                   from '@/page/main'
+import Main                   from '@/components/main'
 import Home                   from '@/page/home'
 import Avatar                 from '@/page/avatar'
+import Info                 from '@/page/info'
 import {
   getToken,
   setToken,
@@ -22,41 +23,38 @@ Vue.use(VueRouter)
 export const routes = [
   {
     name: 'home',
-    path: '/',
-    component: Main,
-    redirect: '/index',
-    sider: false,
-    children: [
-      {
-        name: 'homeIndex',
-        path: '/index',
-        component: Home,
-        meta: { title: '个人中心' },
-        sider: false
-      }
-    ]
+    path: '/home',
+    component: Home,
+    meta: { title: '个人中心' },
+    sider: false
+  },
+  {
+    name: 'avatar',
+    path: '/avatar',
+    component: Avatar,
+    meta: { title: '我的头像' },
+    icon: 'user'
   },
   {
     name: 'info',
     path: '/info',
-    component: Main,
-    redirect: '/info/avatar',
-    icon: 'user',
-    meta: { title: '账号信息' },
-    children: [
-      {
-        name: 'infoAvatar',
-        path: '/info/avatar',
-        component: Avatar,
-        meta: { title: '我的头像' }
-      }
-    ]
+    component: Info,
+    meta: { title: '我的信息' },
+    icon: 'info'
   }
 ]
 
 const router = new VueRouter({
   mode: 'history',
-  routes
+  routes: [
+    {
+      name: 'index',
+      path: '/',
+      component: Main,
+      redirect: '/home',
+      children: routes
+    }
+  ]
 })
 
 router.beforeEach((to, from, next) => {

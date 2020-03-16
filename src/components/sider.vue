@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 20:44:52
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-07 15:07:08
+ * @Last Modified time: 2020-03-16 12:43:37
  */
 
 <template>
@@ -14,24 +14,32 @@
     <a-menu
       :defaultOpenKeys="defaultOpenKeys"
       :defaultSelectedKeys="defaultSelectedKeys"
-      theme="dark"
       mode="inline"
     >
-      <a-sub-menu v-for="item in routes" :key="item.name" v-show="item.sider != false">
+      <template v-for="item in routes">
         <template v-if="item.sider != false">
-          <span slot="title">
-            <a-icon v-if="item.icon" :type="item.icon" />
-            <span>{{ item.meta.title }}</span>
-          </span>
+          <a-sub-menu v-if="item.children" :key="item.name">
+            <span slot="title">
+              <a-icon v-if="item.icon" :type="item.icon" />
+              <span>{{ item.meta.title }}</span>
+            </span>
 
-          <a-menu-item v-for="child in item.children" :key="child.name" v-show="item.sider != false">
-            <template v-if="child.sider != false">
-              <a-icon v-if="child.icon" :type="child.icon" />
-              <router-link :to="child.path">{{ child.meta.title }}</router-link>
-            </template>
+            <a-menu-item v-for="child in item.children" :key="child.name" v-show="item.sider != false">
+              <template v-if="child.sider != false">
+                <a-icon v-if="child.icon" :type="child.icon" />
+                <router-link :to="child.path">{{ child.meta.title }}</router-link>
+              </template>
+            </a-menu-item>
+          </a-sub-menu>
+
+          <a-menu-item v-else :key="item.name">
+            <router-link :to="item.path">
+              <a-icon v-if="item.icon" :type="item.icon" />
+              <span>{{ item.meta.title }}</span>
+            </router-link>
           </a-menu-item>
         </template>
-      </a-sub-menu>
+      </template>
     </a-menu>
   </a-layout-sider>
 </template>
@@ -62,8 +70,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .sider {
+  overflow-x: hidden;
   overflow-y: auto;
   height: 100vh;
 
@@ -87,6 +96,11 @@ export default {
     span {
       margin-left: 10px;
     }
+  }
+
+  .ant-menu {
+    min-height: calc(100vh - 64px);
+    border-right: 0;
   }
 }
 </style>
