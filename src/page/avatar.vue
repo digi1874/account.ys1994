@@ -2,11 +2,12 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-07 14:48:12
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-16 22:44:22
+ * @Last Modified time: 2020-03-17 16:54:16
  */
 
 <template>
   <div>
+    <a-divider orientation="left">我的头像</a-divider>
     <a-upload
       name="file"
       listType="picture-card"
@@ -16,17 +17,31 @@
       :customRequest="uploadAvatar"
       accept="image/jpeg, image/jpg, image/png"
     >
-      <img v-if="userInfo.avatar.image" :src="userInfo.avatar.image | imageUrl" alt="avatar" />
+      <img v-if="userInfo.avatar" :src="userInfo.avatar | imageUrl" alt="avatar" />
       <div v-else>
         <a-icon :type="loading ? 'loading' : 'plus'" />
         <div class="ant-upload-text">上传头像</div>
       </div>
     </a-upload>
+
+    <div v-if="myAvatarList.count" class="list">
+      <a-divider orientation="left">我上传的头像</a-divider>
+      <div class="avatar-list">
+        <a-avatar v-for="item in myAvatarList.data" :key="item.id" @click="updateInfo(item.image)" :src="item.image | imageUrl" :size="80" class="item"/>
+      </div>
+    </div>
+
+    <div v-if="avatarList.count" class="list">
+      <a-divider orientation="left">全部头像</a-divider>
+      <div class="avatar-list">
+        <a-avatar v-for="item in avatarList.data" :key="item.id" @click="updateInfo(item.image)" :src="item.image | imageUrl" :size="80" class="item"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import { notification } from 'ant-design-vue'
 import { compressImage, md5File, urlToImage } from '@/utils'
 import { uploadImage, updateInfo } from '@/api'
@@ -39,12 +54,27 @@ export default {
   },
   computed: {
     ...mapState({
-      userInfo: store => store.user.info
+      userInfo: store => store.user.info,
+      myAvatarList: store => store.avatar.myAvatarList,
+      avatarList: store => store.avatar.avatarList
     })
+  },
+  watch: {
+    userInfo (val) {
+      val.id && this.getMyAvatarList({ page: 1, filter: { userId: val.id } })
+    }
+  },
+  created () {
+    this.getAvatarList({ page: 1 })
+    this.userInfo.id && this.getMyAvatarList({ page: 1, userID: this.userInfo.id })
   },
   methods: {
     ...mapMutations('user', {
       setInfo: 'setInfo'
+    }),
+    ...mapActions('avatar', {
+      getAvatarList: 'getAvatarList',
+      getMyAvatarList: 'getMyAvatarList'
     }),
     beforeUpload(file) {
       if (['image/jpeg', 'image/jpg', 'image/png'].indexOf(file.type) === -1) {
@@ -85,10 +115,24 @@ export default {
         })
         this.setInfo({
           ...this.userInfo,
-          avatar: { image }
+          avatar: image
         })
       })
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.list {
+  margin-top: 30px;
+}
+.avatar-list {
+  display: flex;
+
+  .item {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}
+</style>

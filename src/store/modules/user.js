@@ -1,8 +1,8 @@
 /*
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 23:25:41
- * @Last Modified by:   lin.zhenhui
- * @Last Modified time: 2020-03-06 23:25:41
+ * @Last Modified by: lin.zhenhui
+ * @Last Modified time: 2020-03-17 16:11:27
  */
 
 import { getInfo } from '@/api'
@@ -22,9 +22,9 @@ const mutations = {
 
 const actions = {
   getInfo ({ commit }) {
-    return getInfo().then(response => {
-      commit('setInfo', response.data)
-      return response
+    getInfo().then(({ data }) => {
+      data.avatar = data.avatar.image
+      commit('setInfo', data)
     })
   }
 }

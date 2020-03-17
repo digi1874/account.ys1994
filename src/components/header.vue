@@ -2,15 +2,15 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 23:24:48
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-16 22:06:17
+ * @Last Modified time: 2020-03-17 16:11:39
  */
 
 <template>
   <a-layout-header class="header">
     <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="switchCollapsed" class="switch-collapsed" />
     <div class="right">
-      <a-avatar v-if="!userInfo.avatar.image" icon="user" />
-      <a-avatar v-if="userInfo.avatar.image" :src="userInfo.avatar.image | imageUrl" class="avatar"/>
+      <a-avatar v-if="!userInfo.avatar" icon="user" />
+      <a-avatar v-if="userInfo.avatar" :src="userInfo.avatar | imageUrl" class="avatar"/>
       <span style="margin-left:10px;">{{ userInfo.name }}</span>
       <a-button @click="logout" :loading="logoutLoading" type="link" ghost>退出</a-button>
     </div>
