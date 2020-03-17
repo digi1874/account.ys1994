@@ -16,7 +16,7 @@
       :customRequest="uploadAvatar"
       accept="image/jpeg, image/jpg, image/png"
     >
-      <img v-if="userInfo.avatar" :src="userInfo.avatar | imageUrl" alt="avatar" />
+      <img v-if="userInfo.avatar.image" :src="userInfo.avatar.image | imageUrl" alt="avatar" />
       <div v-else>
         <a-icon :type="loading ? 'loading' : 'plus'" />
         <div class="ant-upload-text">上传头像</div>
@@ -77,15 +77,15 @@ export default {
         })
       })
     },
-    updateInfo(avatar) {
-      this.userInfo.avatar !== avatar &&
-      updateInfo({ avatar }).then(()=> {
+    updateInfo(image) {
+      this.userInfo.avatar.image !== image &&
+      updateInfo({ avatar: { image } }).then(()=> {
         notification.success({
           message: '更换头像成功'
         })
         this.setInfo({
           ...this.userInfo,
-          avatar
+          avatar: { image }
         })
       })
     }

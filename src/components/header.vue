@@ -9,9 +9,9 @@
   <a-layout-header class="header">
     <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="switchCollapsed" class="switch-collapsed" />
     <div class="right">
-      <a-avatar v-if="!info.avatar" icon="user" />
-      <a-avatar v-if="info.avatar" :src="info.avatar | imageUrl" class="avatar"/>
-      <span style="margin-left:10px;">{{ info.name }}</span>
+      <a-avatar v-if="!userInfo.avatar.image" icon="user" />
+      <a-avatar v-if="userInfo.avatar.image" :src="userInfo.avatar.image | imageUrl" class="avatar"/>
+      <span style="margin-left:10px;">{{ userInfo.name }}</span>
       <a-button @click="logout" :loading="logoutLoading" type="link" ghost>退出</a-button>
     </div>
   </a-layout-header>
@@ -31,7 +31,7 @@ export default {
   computed: {
     ...mapState({
       collapsed: store => store.sider.collapsed,
-      info:  store => store.user.info
+      userInfo:  store => store.user.info
     })
   },
   created () {
