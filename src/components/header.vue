@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 23:24:48
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-17 16:11:39
+ * @Last Modified time: 2020-03-17 21:01:11
  */
 
 <template>
@@ -11,7 +11,7 @@
     <div class="right">
       <a-avatar v-if="!userInfo.avatar" icon="user" />
       <a-avatar v-if="userInfo.avatar" :src="userInfo.avatar | imageUrl" class="avatar"/>
-      <span style="margin-left:10px;">{{ userInfo.name }}</span>
+      <span style="margin-left:10px;color:#fff;">{{ userInfo.name }}</span>
       <a-button @click="logout" :loading="logoutLoading" type="link" ghost>退出</a-button>
     </div>
   </a-layout-header>

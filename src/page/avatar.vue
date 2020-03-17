@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-07 14:48:12
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-17 16:54:16
+ * @Last Modified time: 2020-03-17 21:30:40
  */
 
 <template>
@@ -29,6 +29,12 @@
       <div class="avatar-list">
         <a-avatar v-for="item in myAvatarList.data" :key="item.id" @click="updateInfo(item.image)" :src="item.image | imageUrl" :size="80" class="item"/>
       </div>
+      <a-pagination
+        @change="(page, pageSize) => getMyAvatarList({ page, size: pageSize, filter: { userId: this.userInfo.id } })"
+        :current="myAvatarList.page"
+        :total="myAvatarList.count"
+        :pageSize="myAvatarList.size"
+      />
     </div>
 
     <div v-if="avatarList.count" class="list">
@@ -36,6 +42,12 @@
       <div class="avatar-list">
         <a-avatar v-for="item in avatarList.data" :key="item.id" @click="updateInfo(item.image)" :src="item.image | imageUrl" :size="80" class="item"/>
       </div>
+      <a-pagination
+        @change="(page, pageSize) => getAvatarList({ page, size: pageSize })"
+        :current="avatarList.page"
+        :total="avatarList.count"
+        :pageSize="avatarList.size"
+      />
     </div>
   </div>
 </template>
@@ -61,12 +73,12 @@ export default {
   },
   watch: {
     userInfo (val) {
-      val.id && this.getMyAvatarList({ page: 1, filter: { userId: val.id } })
+      val.id && !this.myAvatarList.count && this.getMyAvatarList({ page: 1, size: 1, filter: { userId: val.id } })
     }
   },
   created () {
-    this.getAvatarList({ page: 1 })
-    this.userInfo.id && this.getMyAvatarList({ page: 1, userID: this.userInfo.id })
+    !this.avatarList.count && this.getAvatarList({ page: 1 })
+    this.userInfo.id && !this.myAvatarList.count && this.getMyAvatarList({ page: 1, size: 1, filter: { userId: this.userInfo.id } })
   },
   methods: {
     ...mapMutations('user', {
@@ -129,6 +141,7 @@ export default {
 }
 .avatar-list {
   display: flex;
+  margin-bottom: 15px;
 
   .item {
     margin-right: 10px;
