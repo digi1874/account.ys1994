@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-07 14:48:12
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-17 21:30:40
+ * @Last Modified time: 2020-03-17 23:11:16
  */
 
 <template>
@@ -73,12 +73,12 @@ export default {
   },
   watch: {
     userInfo (val) {
-      val.id && !this.myAvatarList.count && this.getMyAvatarList({ page: 1, size: 1, filter: { userId: val.id } })
+      val.id && !this.myAvatarList.count && this.getMyAvatarList({ page: 1, filter: { userId: val.id } })
     }
   },
   created () {
     !this.avatarList.count && this.getAvatarList({ page: 1 })
-    this.userInfo.id && !this.myAvatarList.count && this.getMyAvatarList({ page: 1, size: 1, filter: { userId: this.userInfo.id } })
+    this.userInfo.id && !this.myAvatarList.count && this.getMyAvatarList({ page: 1, filter: { userId: this.userInfo.id } })
   },
   methods: {
     ...mapMutations('user', {
