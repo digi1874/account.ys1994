@@ -2,7 +2,7 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 23:24:48
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-17 21:01:11
+ * @Last Modified time: 2020-03-19 13:06:11
  */
 
 <template>
@@ -12,15 +12,18 @@
       <a-avatar v-if="!userInfo.avatar" icon="user" />
       <a-avatar v-if="userInfo.avatar" :src="userInfo.avatar | imageUrl" class="avatar"/>
       <span style="margin-left:10px;color:#fff;">{{ userInfo.name }}</span>
-      <a-button @click="logout" :loading="logoutLoading" type="link" ghost>退出</a-button>
+      <a-button @click="logout" :loading="logoutLoading" type="link" ghost>
+        <a-icon type="logout" />
+        退出
+      </a-button>
     </div>
   </a-layout-header>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
-import { delToken, goLogin }                  from '@/utils'
-import { logout }                             from '@/api'
+import { mapState, mapMutations, mapActions }   from 'vuex'
+import { getTokenSignature, delToken, goLogin } from '@/utils'
+import { logout }                               from '@/api'
 
 export default {
   data () {
@@ -52,9 +55,10 @@ export default {
         return
       }
       this.logoutLoading = true
-      logout().finally(() => {
+      const { ip } = this.$ipInfo
+      logout(getTokenSignature(ip)).finally(() => {
         this.logoutLoading = false
-        delToken()
+        delToken(ip)
         this.deleteInfo()
         goLogin()
       })

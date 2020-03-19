@@ -2,46 +2,74 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:00
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-16 16:37:09
+ * @Last Modified time: 2020-03-19 13:26:02
  */
 
+import _ from 'lodash'
 import moment from 'moment'
+import { setLocalStorageItem, getLocalStorageItem } from './localStorage'
 
 // localStorage key
-const TOKEN_KEY = 'user_token'
+const TOKEN_KEY_LIST = 'user_token_list'
 
 /**
  * 获取token signature
  * @function
  * @returns {String}
  */
-export const getTokenSignature = () => getToken().replace(/.+\.(.+)/, '$1')
+export const getTokenSignature = ip => getTokenInfo(ip).signature
 
 /**
  * 获取token
  * @function
  * @returns {String}
  */
-export const getToken = () => {
-  const token = localStorage.getItem(TOKEN_KEY)
+export const getToken = ip => {
+  const tokenInfo = getTokenInfo(ip)
+  return !_.isEmpty(tokenInfo) ? `${tokenInfo.payload}.${tokenInfo.signature}` : ''
+}
 
-  if (!token) return ''
-
-  if (!verify(token)) return ''
-
-  return token
+/**
+ * 获取token
+ * @function
+ * @returns {Object}
+ */
+export const getTokenInfo = ip => {
+  const tokenList = getLocalStorageItem(TOKEN_KEY_LIST)
+  const tokenInfo = _.find(tokenList, item => item.payloadInfo.ip === ip)
+  if (_.isEmpty(tokenInfo)) return {}
+  if (!verifyExp(tokenInfo.payloadInfo.exp)) return {}
+  return tokenInfo
 }
 
 /**
  * 保存token
  * @function
- * @param   {String} token  登录或注册时从接口拿到的token
+ * @param   {String} token  登录或注册时从接口拿到的token，token = `${payload}.${signature}`
  * @returns {Boolean}       返回是否保存。
  */
 export const setToken = token => {
-  if (!verify(token)) return false
+  const tokenArray = token.split('.')
+  if (tokenArray.length !== 2) return false
 
-  localStorage.setItem(TOKEN_KEY, token)
+  const tokenInfo = {
+    payloadInfo: {},
+    payload: tokenArray[0],
+    signature: tokenArray[1]
+  }
+
+  try {
+    tokenInfo.payloadInfo = JSON.parse(atob(tokenInfo.payload))
+  } catch (err) {
+    return false
+  }
+
+  if (!verifyExp(tokenInfo.payloadInfo.exp)) return false
+
+  const tokenList = getLocalStorageItem(TOKEN_KEY_LIST) || []
+  _.remove(tokenList, item => item.payloadInfo.ip === tokenInfo.payloadInfo.ip)
+  tokenList.push(tokenInfo)
+  setLocalStorageItem(TOKEN_KEY_LIST, tokenList)
   return true
 }
 
@@ -49,19 +77,18 @@ export const setToken = token => {
  * 删除token
  * @function
  */
-export const delToken = () => localStorage.removeItem(TOKEN_KEY)
+export const delToken = ip => {
+  const tokenList = getLocalStorageItem(TOKEN_KEY_LIST) || []
+  _.remove(tokenList, item => item.payloadInfo.ip === ip)
+  setLocalStorageItem(TOKEN_KEY_LIST, tokenList)
+}
 
 /**
- * 验证token，只验证是否过期；不验证加密有效性，不需要在前端验证，也不能把私密写在前端。
+ * 验证exp，只验证是否过期
  * @function
- * @param    {String}   token  token值
- * @returns  {Boolean}         返回是否有效。
+ * @param    {String}   exp  过期时间unix
+ * @returns  {Boolean}       返回是否有效。
  */
-function verify (token) {
-  try {
-    const { exp } = JSON.parse(atob(token.replace(/(.+)\..+/, '$1')))
-    return exp > moment().unix()
-  } catch (err) {
-    return false
-  }
+function verifyExp (exp) {
+  return exp > moment().unix()
 }

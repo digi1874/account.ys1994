@@ -2,11 +2,12 @@
  * @Author: lin.zhenhui
  * @Date: 2020-03-06 18:51:08
  * @Last Modified by: lin.zhenhui
- * @Last Modified time: 2020-03-16 18:30:29
+ * @Last Modified time: 2020-03-19 13:25:27
  */
 
 import _                     from 'lodash'
 import axios                 from 'axios'
+import Vue                   from 'vue'
 import { notification }      from 'ant-design-vue'
 
 import { getTokenSignature } from './token'
@@ -18,9 +19,8 @@ const instance = axios.create({ baseURL })
 
 // 拦截请求
 instance.interceptors.request.use(config => {
-  const token = getTokenSignature()
-  if (token) {
-    config.headers.auth = token
+  if (Vue.prototype.$ipInfo) {
+    config.headers.auth = getTokenSignature(Vue.prototype.$ipInfo.ip)
   }
   return config
 }, error => {
